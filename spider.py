@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 openai.api_key = os.environ["OPENAI_API_KEY"]
+openai.api_base = os.environ["OPENAI_API_BASE"]
 
 crawlUrl = "https://docs.apify.com/academy/web-scraping-for-beginners"
 

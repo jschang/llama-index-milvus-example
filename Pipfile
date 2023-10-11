@@ -99,4 +99,4 @@ nltk = "==3.8.1"
 
 [requires]
 python_version = "3.9"
-python_full_version = "3.9.6"
+python_full_version = "3.9.18"
