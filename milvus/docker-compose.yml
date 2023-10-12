@@ -27,9 +27,9 @@ services:
       dockerfile: ./milvus/Dockerfile.llama-cpp.cpu
       context: ../
     volumes:
-      - /mnt/e/Models/TheBloke/Mistral-7B-v0.1-GGUF/mistral-7b-v0.1.Q6_K.gguf:/models/mistral-7b-v0.1.Q6_K.gguf
+      - /mnt/e/Models/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/mistral-7b-instruct-v0.1.Q6_K.gguf:/models/mistral-7b-instruct-v0.1.Q6_K.gguf
     environment:
-      - MODEL=/models/mistral-7b-v0.1.Q6_K.gguf
+      - MODEL=/models/mistral-7b-instruct-v0.1.Q6_K.gguf
     ports:
       - 8002:8000
     deploy:

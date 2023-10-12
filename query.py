@@ -1,6 +1,8 @@
-from llama_index import VectorStoreIndex, StorageContext
+from llama_index import VectorStoreIndex, StorageContext, ServiceContext
+from llama_index.chat_engine.types import ChatMode
+from llama_index.llms import OpenAI
+from llama_index.llms.openai_utils import ALL_AVAILABLE_MODELS, CHAT_MODELS
 from llama_index.vector_stores import MilvusVectorStore
-from langchain import OpenAI
 import openai
 import gradio as gr
 import os
@@ -11,16 +13,26 @@ openai.api_key = os.environ.get("OPENAI_API_KEY", "sk-12345678901234567890123456
 # original base is "https://api.openai.com/v1"
 openai.api_base = os.environ.get("OPENAI_API_BASE", "http://milvus-openai:8000/")
 
+model = os.environ.get("MODEL", "/models/mistral-7b-v0.1.Q6_K.gguf")
+# https://docs.llamaindex.ai/en/stable/examples/chat_engine/chat_engine_openai.html
+# and then, of course, my model running on llama.cpp isn't supported... so we have to hack
+ALL_AVAILABLE_MODELS[model] = 4096
+CHAT_MODELS[model] = 4096
+service_context = ServiceContext.from_defaults(llm=OpenAI(model=model))
+
 vector_store = MilvusVectorStore(
     host=os.environ.get("MILVUS_HOST", "milvus-standalone"),
     port=os.environ.get("MILVUS_PORT", "19530"),
     collection_name="webscrape",
     # this took a while to sort out and wasn't obvious
     # the sliding window of Mistral is 4096*32, and this seemed to work
-    dim=4096
+    dim=4096,
+    service_context=service_context
 )
 index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
-query_engine = index.as_chat_engine(chat_mode="openai", verbose=True)
+query_engine = index.as_chat_engine(chat_mode=ChatMode.OPENAI, verbose=True)
+
+
 # index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
 # query_engine = index.as_query_engine()
 
